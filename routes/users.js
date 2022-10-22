@@ -3,7 +3,8 @@ var router = express.Router();
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
+  //cara panggil dari file .env
+  res.send(process.env.APP_NAME);
 });
 
 // Route test
