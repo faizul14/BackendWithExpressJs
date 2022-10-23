@@ -23,15 +23,6 @@ router.post('/addnote', async (req, res) => {
     }
 
     const validate = v.validate(req.body, schema);
-
-    // if(validate.length){
-    //     return res
-    //             .status(400)
-    //             .json({validate });
-    // }
-
-    // res.send('ok');
-
     if( validate.length) {
         return res
                 .json({
@@ -48,5 +39,78 @@ router.post('/addnote', async (req, res) => {
     })
     .status(200);
 });
+
+
+router.put('/updateNote/:id', async (req, res) => {
+    const id = req.params.id;
+    let note = await Note.findByPk(id);
+    if(!note){
+        return res.json({
+            message : "Data not found"
+        })
+    }
+
+    const schema = {
+        name: 'string|optional',
+        tittle: 'string|optional',
+        note: 'string|optional'
+    }
+    const validate = v.validate(req.body, schema);
+    if(validate.length){
+        return res
+        .json({validate})
+        .status(400)
+    }
+
+    note = await note.update(req.body);
+    res.json({
+        note
+    })
+    
+})
+
+router.delete('/deleteNote/:id', async (req, res) => {
+    const id = req.params.id;
+    let note = await Note.findByPk(id);
+    if(!note){
+        return res
+        .json({
+            message: 'Data not found'
+        })
+    }
+
+    await note.destroy();
+    res
+    .json({
+        message: "Succes delete note"
+    })
+    .status(200);
+})
+
+router.get('/', async(req, res) => {
+    const note = await Note.findAll();
+    res
+    .json({
+        note
+    })
+})
+
+router.get('/findNote/:id', async(req, res) => {
+    const id = req.params.id;
+    const note = await Note.findByPk(id);
+    if(!note){
+        return res
+        .json({
+            message: 'Data not found'
+        })
+    }
+
+    res
+    .json({
+        note
+    })
+    .status(200);
+})
+
 
 module.exports = router;
